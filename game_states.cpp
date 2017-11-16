@@ -76,17 +76,27 @@ void main_game(int selector)//난이도 선택 변수
 	int fps_calc_timer = SDL_GetTicks();
 	int score = 0;
 
+	int randomball[MAX_BALLS];
+
+	for (i = 0; i < MAX_BALLS; i++)
+		randomball[i] = 0;
+
 	init_ball();
 
 	while (quit == false)
 	{
+		for (i = 0; i < current_balls; i++)
+		{
+			randomball[i] = (double)rand() / RAND_MAX * (level - 1) + BALL_VELOCITY;
+		}
+
 		fps_timer = SDL_GetTicks();
 		if (SDL_GetTicks() - start_time > 1)
 		{
 			start_time = SDL_GetTicks();
 			for (i = 0; i < current_balls; i++)
 			{
-				balls[i].y += BALL_VELOCITY + level - 1;//level증가를 위해서 기존 값에 level을 곱해줌
+				balls[i].y += randomball[i];//level증가를 위해서 기존 값에 level을 곱해줌
 			}
 		}
 		if (current_balls < MAX_BALLS)
