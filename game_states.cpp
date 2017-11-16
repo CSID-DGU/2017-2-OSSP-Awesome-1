@@ -76,7 +76,7 @@ void main_game(int selector)//난이도 선택 변수
 	int fps_calc_timer = SDL_GetTicks();
 	int score = 0;
 
-	int randomball[MAX_BALLS];
+	int randomball[MAX_BALLS]; // 떨어지는 볼의 속도를 랜덤하게 조정하기 위해 선언한 배열
 
 	for (i = 0; i < MAX_BALLS; i++)
 		randomball[i] = 0;
@@ -87,7 +87,7 @@ void main_game(int selector)//난이도 선택 변수
 	{
 		for (i = 0; i < current_balls; i++)
 		{
-			randomball[i] = (double)rand() / RAND_MAX * (level - 1) + BALL_VELOCITY;
+			randomball[i] = (double)rand() / RAND_MAX * (level - 1) + BALL_VELOCITY; // 초기 속도와 레벨 사이의 난수 생성
 		}
 
 		fps_timer = SDL_GetTicks();
