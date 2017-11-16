@@ -1,1 +1,0 @@
-# 2017-2-OSSP-Awesome-1
