@@ -14,6 +14,11 @@ const int BALL_VELOCITY = 2;
 
 const int LEVEL_UP_COUNT = 100;//level이 증가할때에 대비해서 추가
 
+const int SINGLE_MODE = 0;
+const int MULTI_MODE = 1;
+const int SERVER_MODE = 2;
+const int CLIENT_MODE = 3;
+
 extern SDL_Surface *background;
 extern SDL_Surface *screen;
 extern SDL_Surface* message;
@@ -36,3 +41,5 @@ void clean_up();
 void main_game(int selector);
 void init_ball();
 void game_over(int score);
+void menu();
+void show_select_mode(int selector);
