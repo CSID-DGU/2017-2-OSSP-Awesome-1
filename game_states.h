@@ -19,6 +19,7 @@ extern SDL_Surface *screen;
 extern SDL_Surface* message;
 extern SDL_Surface* message2;
 extern SDL_Surface* player;
+extern SDL_Surface* player2;
 extern SDL_Surface* ball;
 
 extern SDL_Event event;

@@ -2,9 +2,20 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <sstream>
 #include <iostream>//출력 테스트를 위해서 추가
+/*
+socket programming을 위하여 추가되 해더
+*/
+#include <cstring>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <unistd.h>
+#include <netdb.h>
 
 const int FRAMES_PER_SECOND = 200;
 

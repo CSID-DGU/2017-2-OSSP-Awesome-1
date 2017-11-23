@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "game_states.h"
 
 SDL_Surface *background = NULL;
@@ -7,6 +5,7 @@ SDL_Surface *screen = NULL;
 SDL_Surface* message = NULL;
 SDL_Surface* message2 = NULL;
 SDL_Surface* player = NULL;
+SDL_Surface* player2 = NULL;
 SDL_Surface* ball = NULL;
 
 SDL_Event event;
@@ -38,11 +37,11 @@ int main(int argc, char* argv[])
 			message = TTF_RenderText_Solid(font, "Press space to start, any other to quit", textColor);
 			apply_surface(0, 0, background, screen);
 			apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
-			message = TTF_RenderText_Solid(font, "level 1         level 2         level 3", textColor);//³­ÀÌµµ ¼±ÅÃ±â´É
+			message = TTF_RenderText_Solid(font, "level 1         level 2         level 3", textColor);//ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½
 			apply_surface((640 - message->w) / 2, 480 / 2 + message->h, message, screen);
 			message2 = TTF_RenderText_Solid(font, "level 1         ", textColor);
 			int tmp = message2->w;
-			message2 = TTF_RenderText_Solid(font, ">", textColor);//³­ÀÌµµ ¼±ÅÃ
+			message2 = TTF_RenderText_Solid(font, ">", textColor);//ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
 			apply_surface((640 - message->w) / 2 - 5 + selector * tmp, 480 / 2 + message->h, message2, screen);
 			SDL_Flip(screen);
 			if (event.type == SDL_KEYDOWN)
@@ -76,11 +75,10 @@ int main(int argc, char* argv[])
 			{
 				quit = true;
 			}
-			
+
 		}
-		
+
 	}
 	clean_up();
 	return 0;
 }
-
