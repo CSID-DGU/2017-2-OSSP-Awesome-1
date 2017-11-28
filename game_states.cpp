@@ -16,7 +16,7 @@ void menu()
 			mode = select_level();
 			break;
 		case MULTI_MODE:
-			mode = waiting();
+			mode = socketing();
 			break;
 		default:
 			break;
@@ -143,41 +143,99 @@ int select_level()
 	}
 }
 
-int waiting()
+int waiting(int count)
 {
-	bool quit = false;
-	int i = 0;
-	while (quit == false)
+	SDL_Delay(500);
+	std::string str = "Waiting";
+	for (int j = 0; j < count; j++) str += " .";
+	message = TTF_RenderText_Solid(font, str.c_str(), textColor);
+	apply_surface(0, 0, background, screen);
+	apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
+	SDL_Flip(screen);
+	if (SDL_PollEvent(&event))
 	{
-		SDL_Delay(500);
-		std::string str = "Waiting";
-		for (int j = 0; j < i; j++) str += " .";
-		message = TTF_RenderText_Solid(font, str.c_str(), textColor);
-		apply_surface(0, 0, background, screen);
-		apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
-		SDL_Flip(screen);
-		if (SDL_PollEvent(&event))
+		if (event.type == SDL_KEYDOWN)
 		{
-			if (event.type == SDL_KEYDOWN)
+			switch (event.key.keysym.sym)
 			{
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_ESCAPE://esc 키가 눌리면 종료
-					return INITIAL_MODE;
-					break;
-				default:
-					break;
-				}
-			}
-			else if (event.type == SDL_QUIT)
-			{
-				return EXIT;
-				quit = true;
+			case SDLK_ESCAPE://esc 키가 눌리면 종료
+				return INITIAL_MODE;
+				break;
+			default:
+				break;
 			}
 		}
-		i = (i + 1) % 4;
+		else if (event.type == SDL_QUIT)
+		{
+			return EXIT;
+		}
 	}
 
+	return MULTI_MODE;
+}
+
+int socketing()
+{
+	client = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (client < 0)
+	{
+		cout << "\n소켓 준비 에러..." << endl;
+	}
+
+	cout << "\n=> 소켓 생성 완료..." << endl;
+
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(portNum);
+
+	inet_pton(AF_INET, ip, &server_addr.sin_addr);
+	int succes = -1;
+	int count = 0;
+	while (succes = connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
+	{
+		count++;
+		if (count == 100) break;
+	}
+
+	if (succes != 0)
+	{
+		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
+		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
+		{
+			cout << "=> Error binding connection, the socket has already been established..." << endl;
+		}
+
+		size = sizeof(server_addr);
+		cout << "=> Looking for clients..." << endl;
+		count = -1;
+		while (server = accept(client, (struct sockaddr *)&server_addr, &size) == -1)
+		{
+			count = (count + 1) % 4;
+			if (waiting(count) == INITIAL_MODE) return INITIAL_MODE;
+		}
+		/* ------------- ACCEPTING CLIENTS  ------------- */
+		/* ----------------- listen() ------------------- */
+
+		// first check if it is valid or not
+		if (server < 0)
+			cout << "=> Error on accepting..." << endl;
+		buffer_int[0] = (unsigned int)time(NULL);
+		send(server, buffer_int, bufsize, 0);
+		srand(buffer_int[0]);
+		message = NULL;
+		init();
+		main_game(0, SERVER_MODE);
+	}
+	else
+	{
+		cout << "연결 완료!" << endl;
+		cout << "=> 연결된 서버 포트 번호: " << portNum << endl;
+		recv(client, buffer_int, bufsize, 0);
+		srand(buffer_int[0]);
+		message = NULL;
+		init();
+		main_game(0, CLIENT_MODE);
+	}
 	return INITIAL_MODE;
 }
 
@@ -267,77 +325,8 @@ void main_game(int selector, int mode)//난이도 선택 변수
 	int score = 0;
 
 	int randomball[MAX_BALLS]; // 떨어지는 볼의 속도를 랜덤하게 조정하기 위해 선언한 배열
-	int socket_selector = 0;//0 = server, 1 = client, 3 = single
-	int client, server;
-	int portNum = 1500;
-	bool isExit = false;
-	int bufsize = 1024;
-	char buffer[bufsize];
-	int buffer_int[bufsize / 4];
-	int clientCount = 1;
-	unsigned int time_now;
-	char* ip = "127.0.0.1";
 
-	struct sockaddr_in server_addr;
-	socklen_t size;
-
-	/* ---------- ESTABLISHING SOCKET CONNECTION ----------*/
-	/* --------------- socket() function ------------------*/
-
-	client = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (client < 0)
-	{
-		cout << "\n소켓 준비 에러..." << endl;
-	}
-
-	cout << "\n=> 소켓 생성 완료..." << endl;
-
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(portNum);
-	/*socket programming을 위해 필요한 변수 부분 추가 끝()*/
-
-
-
-	switch (mode)
-	{
-		//server
-	case SERVER_MODE:
-		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
-		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
-		{
-			cout << "=> Error binding connection, the socket has already been established..." << endl;
-		}
-
-		size = sizeof(server_addr);
-		cout << "=> Looking for clients..." << endl;
-		/* ------------- LISTENING CALL ------------- */
-		/* ---------------- listen() ---------------- */
-		listen(client, 1);
-		/* ------------- ACCEPTING CLIENTS  ------------- */
-		/* ----------------- listen() ------------------- */
-		server = accept(client, (struct sockaddr *)&server_addr, &size);
-
-		// first check if it is valid or not
-		if (server < 0)
-			cout << "=> Error on accepting..." << endl;
-		buffer_int[0] = (unsigned int)time(NULL);
-		send(server, buffer_int, bufsize, 0);
-		srand(buffer_int[0]);
-		break;
-		//client
-	case CLIENT_MODE:
-		inet_pton(AF_INET, ip, &server_addr.sin_addr);
-		while (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
-		{
-		}
-		cout << "연결 완료!" << endl;
-		cout << "=> 연결된 서버 포트 번호: " << portNum << endl;
-		recv(client, buffer_int, bufsize, 0);
-		srand(buffer_int[0]);
-	case SINGLE_MODE:
-		srand((unsigned int)time(NULL));
-	}
+	if (mode == SINGLE_MODE) srand((unsigned int)time(NULL)); //in Single Mode set random ball
 
 	for (i = 0; i < MAX_BALLS; i++)
 		randomball[i] = 0;

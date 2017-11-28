@@ -48,4 +48,17 @@ void game_over(int score);
 void menu();
 int select_mode();
 int select_level();
-int waiting();
+int waiting(int count);
+int socketing();
+
+//socket variable
+int client, server;
+int portNum = 1500;
+int bufsize = 1024;
+int buffer_int[bufsize / 4];
+int clientCount = 1;
+unsigned int time_now;
+char* ip = "127.0.0.1";
+
+struct sockaddr_in server_addr;
+socklen_t size;
