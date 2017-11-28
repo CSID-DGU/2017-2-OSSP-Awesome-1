@@ -34,6 +34,8 @@ int select_mode()
 		{
 			message = TTF_RenderText_Solid(font, "Press space to start, esc key to quit", textColor);
 			apply_surface(0, 0, background, screen);
+			title_message = TTF_RenderText_Solid(font2, "Awesome Dodge", textColor);
+			apply_surface((640 - title_message->w) / 2, 80, title_message, screen);
 			apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
 			message = TTF_RenderText_Solid(font, "Single         Multi", textColor);
 			apply_surface((640 - message->w) / 2, 480 / 2 + message->h, message, screen);
@@ -91,6 +93,8 @@ int select_level()
 		{
 			message = TTF_RenderText_Solid(font, "Press space to start, esc key to quit", textColor);
 			apply_surface(0, 0, background, screen);
+			title_message = TTF_RenderText_Solid(font2, "Awesome Dodge", textColor);
+			apply_surface((640 - title_message->w) / 2, 100, title_message, screen);
 			apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
 			message = TTF_RenderText_Solid(font, "level 1         level 2         level 3", textColor);
 			apply_surface((640 - message->w) / 2, 480 / 2 + message->h, message, screen);
@@ -204,7 +208,8 @@ bool load_files()
 {
 
     background = load_image( "assets/background.png" );
-    font = TTF_OpenFont( "assets/Terminus.ttf", 24 );
+    font = TTF_OpenFont( "assets/BMDOHYEON_ttf.ttf", 24 );
+    font2 = TTF_OpenFont( "assets/RaphLanokFuture.otf", 48 );
 
     player = load_image( "assets/player_rocket.bmp" );
     player2 = load_image( "assets/player2_rocket.bmp" );
