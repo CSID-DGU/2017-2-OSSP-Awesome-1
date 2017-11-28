@@ -242,10 +242,10 @@ void main_game(int selector, int mode)//난이도 선택 변수
 	bool quit = false;
 	//client side player
 	int player_position = SCREEN_WIDTH / 2;
-	int player_position_y = SCREEN_HEIGHT / 2;
+	int player_position_y = SCREEN_HEIGHT - 3;
 	//server side player
 	int player2_position = SCREEN_WIDTH / 2;
-	int player2_position_y = SCREEN_HEIGHT / 2;
+	int player2_position_y = SCREEN_HEIGHT - 3;
 	Uint8 *keystates = NULL;
 	int start_time = SDL_GetTicks();
 	int level = 1 + selector; // level 정의
