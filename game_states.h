@@ -54,7 +54,7 @@ int socketing();
 //socket variable
 int client, server;
 int portNum = 1500;
-int bufsize = 1024;
+const int bufsize = 1024;
 int buffer_int[bufsize / 4];
 int clientCount = 1;
 unsigned int time_now;
