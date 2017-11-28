@@ -52,13 +52,13 @@ int waiting(int count);
 int socketing();
 
 //socket variable
-int client, server;
-int portNum = 1500;
-const int bufsize = 1024;
-int buffer_int[bufsize / 4];
-int clientCount = 1;
-unsigned int time_now;
-char* ip = "127.0.0.1";
+static const int bufsize = 1024;
+static const char* ip = "127.0.0.1";
+static int client, server;
+static int portNum = 1500;
+static int buffer_int[bufsize / 4];
+static int clientCount = 1;
+static unsigned int time_now;
 
-struct sockaddr_in server_addr;
-socklen_t size;
+static struct sockaddr_in server_addr;
+static socklen_t size;
