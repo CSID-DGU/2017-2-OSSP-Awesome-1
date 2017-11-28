@@ -14,6 +14,8 @@ const int BALL_VELOCITY = 2;
 
 const int LEVEL_UP_COUNT = 100;//level이 증가할때에 대비해서 추가
 
+const int INITIAL_MODE = 10;
+const int EXIT = -1;
 const int SINGLE_MODE = 0;
 const int MULTI_MODE = 1;
 const int SERVER_MODE = 2;
@@ -38,8 +40,10 @@ bool init();
 bool load_files();
 void clean_up();
 
-void main_game(int selector);
+void main_game(int selector, int mode);
 void init_ball();
 void game_over(int score);
 void menu();
-void show_select_mode(int selector);
+int select_mode();
+int select_level();
+int waiting();
