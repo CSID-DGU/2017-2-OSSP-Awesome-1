@@ -180,10 +180,10 @@ int socketing()
 
 	if (client < 0)
 	{
-		cout << "\n소켓 준비 에러..." << endl;
+		std::cout << "\n소켓 준비 에러..." << std::endl;
 	}
 
-	cout << "\n=> 소켓 생성 완료..." << endl;
+	std::cout << "\n=> 소켓 생성 완료..." << std::endl;
 
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(portNum);
@@ -202,11 +202,11 @@ int socketing()
 		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
 		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
 		{
-			cout << "=> Error binding connection, the socket has already been established..." << endl;
+			std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
 		}
 
 		size = sizeof(server_addr);
-		cout << "=> Looking for clients..." << endl;
+		std::cout << "=> Looking for clients..." << std::endl;
 		count = -1;
 		while (server = accept(client, (struct sockaddr *)&server_addr, &size) == -1)
 		{
@@ -218,7 +218,7 @@ int socketing()
 
 		// first check if it is valid or not
 		if (server < 0)
-			cout << "=> Error on accepting..." << endl;
+			std::cout << "=> Error on accepting..." << std::endl;
 		buffer_int[0] = (unsigned int)time(NULL);
 		send(server, buffer_int, bufsize, 0);
 		srand(buffer_int[0]);
@@ -228,8 +228,8 @@ int socketing()
 	}
 	else
 	{
-		cout << "연결 완료!" << endl;
-		cout << "=> 연결된 서버 포트 번호: " << portNum << endl;
+		std::cout << "연결 완료!" << std::endl;
+		std::cout << "=> 연결된 서버 포트 번호: " << portNum << std::endl;
 		recv(client, buffer_int, bufsize, 0);
 		srand(buffer_int[0]);
 		message = NULL;
@@ -241,62 +241,62 @@ int socketing()
 
 bool init()
 {
-    if( SDL_Init( SDL_INIT_EVERYTHING ) == -1 )
-    {
-        return false;
-    }
-    screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE );
+	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
+	{
+		return false;
+	}
+	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
 
-    if( screen == NULL )
-    {
-        return false;
-    }
+	if (screen == NULL)
+	{
+		return false;
+	}
 
-    if( TTF_Init() == -1 )
-    {
-        return false;
-    }
-	srand ( time(NULL) );
-    SDL_WM_SetCaption( "Awesome", NULL );
+	if (TTF_Init() == -1)
+	{
+		return false;
+	}
+	srand(time(NULL));
+	SDL_WM_SetCaption("Awesome", NULL);
 
-    return true;
+	return true;
 }
 
 bool load_files()
 {
 
-    background = load_image( "assets/background.png" );
-    font = TTF_OpenFont( "assets/BMDOHYEON_ttf.ttf", 24 );
-    font2 = TTF_OpenFont( "assets/RaphLanokFuture.otf", 48 );
+	background = load_image("assets/background.png");
+	font = TTF_OpenFont("assets/BMDOHYEON_ttf.ttf", 24);
+	font2 = TTF_OpenFont("assets/RaphLanokFuture.otf", 48);
 
-    player = load_image( "assets/player_rocket.bmp" );
-    player2 = load_image( "assets/player2_rocket.bmp" );
-    ball = load_image( "assets/enemy_ball.bmp" );
+	player = load_image("assets/player_rocket.bmp");
+	player2 = load_image("assets/player2_rocket.bmp");
+	ball = load_image("assets/enemy_ball.bmp");
 
-    if( background == NULL )
-    {
-        return false;
-    }
+	if (background == NULL)
+	{
+		return false;
+	}
 
-    if( font == NULL )
-    {
-        return false;
-    }
+	if (font == NULL)
+	{
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 void clean_up()
 {
-    SDL_FreeSurface( background );
-    SDL_FreeSurface( message );
-    SDL_FreeSurface( screen );
-    SDL_FreeSurface( ball );
+	SDL_FreeSurface(background);
+	SDL_FreeSurface(message);
+	SDL_FreeSurface(screen);
+	SDL_FreeSurface(ball);
 
-    TTF_CloseFont( font );
-    TTF_Quit();
+	TTF_CloseFont(font);
+	TTF_Quit();
 
-    SDL_Quit();
+	SDL_Quit();
 }
 
 void main_game(int selector, int mode)//난이도 선택 변수
@@ -435,36 +435,36 @@ void main_game(int selector, int mode)//난이도 선택 변수
 						{
 							//server side
 						case SERVER_MODE:
-							cout << "SERVER SIDE :";
-							cout << "Last Client: ";
+							std::cout << "SERVER SIDE :";
+							std::cout << "Last Client: ";
 							recv(server, buffer_int, bufsize, 0);
 							player2_position = buffer_int[0];
 							player2_position_y = buffer_int[1];
 							enemy_life = buffer_int[2];
-							cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							buffer_int[0] = player_position;
 							buffer_int[1] = player_position_y;
 							buffer_int[2] = life;
-							cout << "Last Server: ";
-							cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+							std::cout << "Last Server: ";
+							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							send(server, buffer_int, bufsize, 0);
 							break;
 
 							//client side
 						case CLIENT_MODE:
-							cout << "CLIENT SIDE :";
-							cout << "Last Client: ";
+							std::cout << "CLIENT SIDE :";
+							std::cout << "Last Client: ";
 							buffer_int[0] = player_position;
 							buffer_int[1] = player_position_y;
 							buffer_int[2] = life;
-							cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							send(client, buffer_int, bufsize, 0);
-							cout << "Last Server: ";
+							std::cout << "Last Server: ";
 							recv(client, buffer_int, bufsize, 0);
 							player2_position = buffer_int[0];
 							player2_position_y = buffer_int[1];
 							enemy_life = buffer_int[2];
-							cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							break;
 						case SINGLE_MODE:
 							break;
@@ -518,34 +518,34 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			{
 				//server side
 			case SERVER_MODE:
-				cout << "Client: ";
+				std::cout << "Client: ";
 				recv(server, buffer_int, bufsize, 0);
 				player2_position = buffer_int[0];
 				player2_position_y = buffer_int[1];
 				enemy_life = buffer_int[2];
-				cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				buffer_int[0] = player_position;
 				buffer_int[1] = player_position_y;
 				buffer_int[2] = life;
-				cout << "Server: ";
-				cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+				std::cout << "Server: ";
+				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				send(server, buffer_int, bufsize, 0);
 				break;
 
 				//client side
 			case CLIENT_MODE:
-				cout << "Client: ";
+				std::cout << "Client: ";
 				buffer_int[0] = player_position;
 				buffer_int[1] = player_position_y;
 				buffer_int[2] = life;
-				cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				send(client, buffer_int, bufsize, 0);
-				cout << "Server: ";
+				std::cout << "Server: ";
 				recv(client, buffer_int, bufsize, 0);
 				player2_position = buffer_int[0];
 				player2_position_y = buffer_int[1];
 				enemy_life = buffer_int[2];
-				cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << endl;
+				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				break;
 			case SINGLE_MODE:
 				break;
@@ -577,14 +577,14 @@ void game_over(int score)
 	apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 - message->h, message, screen);
 	std::stringstream caption;
 	caption << "Score is : " << score;
-	message = TTF_RenderText_Solid( font, caption.str().c_str(), textColor );
+	message = TTF_RenderText_Solid(font, caption.str().c_str(), textColor);
 	apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 + message->h, message, screen);
-	SDL_Flip( screen );
+	SDL_Flip(screen);
 	while (true)
 	{
-		if( SDL_PollEvent( &event ) )
+		if (SDL_PollEvent(&event))
 		{
-			if( event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE))
+			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE))
 			{
 				break;
 			}
