@@ -276,7 +276,8 @@ bool load_files()
 
 	player = load_image("assets/player_rocket.bmp");
 	player2 = load_image("assets/player2_rocket.bmp");
-	ball = load_image("assets/enemy_ball.bmp");
+	ball = load_image("assets/rocket.bmp");
+	heart = load_image("assets/life.bmp");
 
 	if (background == NULL)
 	{
@@ -406,7 +407,9 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			player_position_y++;
 		}//위 아래 이동 추가
 
+		//apply_surface(500, 10, heart, screen);	
 		apply_surface(0, 0, background, screen);
+
 		for (i = 0; i < MAX_BALLS; i++)
 		{
 			// printf("ball %i: %i %i\n",i , balls[i].x, balls[i].y);
@@ -477,11 +480,11 @@ void main_game(int selector, int mode)//난이도 선택 변수
 					close(server);
 					if(mode == SINGLE_MODE)
 					{
-						game_over(score, SINGLE_MODE);
+						game_over(level, score, SINGLE_MODE);
 					}
 					else
 					{
-						game_over(score, LOSER);// 2 == LOSE_CASE
+						game_over(level, score, LOSER);// 2 == LOSE_CASE
 					}
 					quit = true;
 				}
@@ -564,7 +567,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 
 		if(enemy_life == 0 && (mode == SERVER_MODE || mode == CLIENT_MODE))
 		{
-			game_over(score, WINNER);//1 == WIN_CASE
+			game_over(level, score, WINNER);//1 == WIN_CASE
 			quit = true;
 		}
 
@@ -587,9 +590,10 @@ void init_ball()
 	}
 }
 
-void game_over(int score, int state)
+void game_over(int level, int score, int state)
 {
 	std::stringstream caption;
+	std::stringstream caption2;
 	switch (state)
 	{
 		//SINGLE_MODE
@@ -597,9 +601,12 @@ void game_over(int score, int state)
 		apply_surface(0, 0, background, screen);
 		message = TTF_RenderText_Solid(font, "Game over", textColor);
 		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 - message->h, message, screen);
-		caption << "Score is : " << score;
+		caption << "Level : " << level;
 		message = TTF_RenderText_Solid(font, caption.str().c_str(), textColor);
 		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 + message->h, message, screen);
+		caption2 << "Score is : " << score;
+		message = TTF_RenderText_Solid(font, caption2.str().c_str(), textColor);
+		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 + message->h + 50, message, screen);
 		SDL_Flip(screen);
 		break;
 		// 1 == WIN_CASE

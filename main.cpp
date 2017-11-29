@@ -8,6 +8,7 @@ SDL_Surface* message2 = NULL;
 SDL_Surface* player = NULL;
 SDL_Surface* player2 = NULL;
 SDL_Surface* ball = NULL;
+SDL_Surface* heart = NULL;
 
 SDL_Event event;
 TTF_Font *font = NULL;
