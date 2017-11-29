@@ -189,27 +189,28 @@ int socketing()
 	server_addr.sin_port = htons(portNum);
 
 	inet_pton(AF_INET, ip, &server_addr.sin_addr);
-	int succes = -1;
+	bool succes = true;
 	int count = 0;
-	while (succes = connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
+	if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
 	{
-		count++;
-		if (count == 100) break;
+		succes = false;
+		std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
 	}
 
-	if (succes != 0)
+	if (succes)
 	{
 		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
-		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
-		{
-			std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
-		}
+
+		listen(client, 1);
 
 		size = sizeof(server_addr);
 		std::cout << "=> Looking for clients..." << std::endl;
 		count = -1;
-		while (server = accept(client, (struct sockaddr *)&server_addr, &size) == -1)
+		server = -1;
+		while (true)
 		{
+			server = accept(client, (struct sockaddr *)&server_addr, &size);
+			if(server >= 0) break;
 			count = (count + 1) % 4;
 			if (waiting(count) == INITIAL_MODE) return INITIAL_MODE;
 		}
@@ -217,8 +218,10 @@ int socketing()
 		/* ----------------- listen() ------------------- */
 
 		// first check if it is valid or not
+		/*
 		if (server < 0)
 			std::cout << "=> Error on accepting..." << std::endl;
+		*/
 		buffer_int[0] = (unsigned int)time(NULL);
 		send(server, buffer_int, bufsize, 0);
 		srand(buffer_int[0]);
@@ -228,6 +231,8 @@ int socketing()
 	}
 	else
 	{
+		while (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
+		{}
 		std::cout << "연결 완료!" << std::endl;
 		std::cout << "=> 연결된 서버 포트 번호: " << portNum << std::endl;
 		recv(client, buffer_int, bufsize, 0);
@@ -430,7 +435,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 				life--;
 				if (life <= 0) //life소진시 종료
 				{
-					if (enemy_life == 0)
+					if (enemy_life != 0)
 						switch (mode)
 						{
 							//server side
@@ -449,7 +454,6 @@ void main_game(int selector, int mode)//난이도 선택 변수
 							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							send(server, buffer_int, bufsize, 0);
 							break;
-
 							//client side
 						case CLIENT_MODE:
 							std::cout << "CLIENT SIDE :";
@@ -471,7 +475,14 @@ void main_game(int selector, int mode)//난이도 선택 변수
 						}
 					close(client);
 					close(server);
-					game_over(score);
+					if(mode == SINGLE_MODE)
+					{
+						game_over(score, SINGLE_MODE);
+					}
+					else
+					{
+						game_over(score, LOSER);// 2 == LOSE_CASE
+					}
 					quit = true;
 				}
 				else //life가 남아있으면 공 초기화후 계속
@@ -513,7 +524,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		delay = SDL_GetTicks() - fps_timer;
 
 		/*  Socket 통신을 위한 부분 추가  */
-		if (enemy_life != 0)
+		if (enemy_life != 0 && life != 0)
 			switch (mode)
 			{
 				//server side
@@ -551,6 +562,12 @@ void main_game(int selector, int mode)//난이도 선택 변수
 				break;
 			}
 
+		if(enemy_life == 0 && (mode == SERVER_MODE || mode == CLIENT_MODE))
+		{
+			game_over(score, WINNER);//1 == WIN_CASE
+			quit = true;
+		}
+
 		if (delay < 1000 / FRAMES_PER_SECOND)
 		{
 			SDL_Delay((1000 / FRAMES_PER_SECOND) - delay);
@@ -570,16 +587,37 @@ void init_ball()
 	}
 }
 
-void game_over(int score)
+void game_over(int score, int state)
 {
-	apply_surface(0, 0, background, screen);
-	message = TTF_RenderText_Solid(font, "Game over", textColor);
-	apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 - message->h, message, screen);
 	std::stringstream caption;
-	caption << "Score is : " << score;
-	message = TTF_RenderText_Solid(font, caption.str().c_str(), textColor);
-	apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 + message->h, message, screen);
-	SDL_Flip(screen);
+	switch (state)
+	{
+		//SINGLE_MODE
+		case SINGLE_MODE:
+		apply_surface(0, 0, background, screen);
+		message = TTF_RenderText_Solid(font, "Game over", textColor);
+		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 - message->h, message, screen);
+		caption << "Score is : " << score;
+		message = TTF_RenderText_Solid(font, caption.str().c_str(), textColor);
+		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 + message->h, message, screen);
+		SDL_Flip(screen);
+		break;
+		// 1 == WIN_CASE
+		case WINNER:
+		apply_surface(0, 0, background, screen);
+		message = TTF_RenderText_Solid(font, "! ! ! YOU WIN ! ! !", textColor);
+		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 - message->h, message, screen);
+		SDL_Flip(screen);
+		break;
+		// 2 == LOSE_CASE
+		case LOSER:
+		apply_surface(0, 0, background, screen);
+		message = TTF_RenderText_Solid(font, "( T . T ) YOU LOSE ( T . T )", textColor);
+		apply_surface((SCREEN_WIDTH - message->w) / 2, SCREEN_HEIGHT / 2 - message->h, message, screen);
+		SDL_Flip(screen);
+		break;
+	}
+
 	while (true)
 	{
 		if (SDL_PollEvent(&event))

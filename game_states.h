@@ -20,6 +20,8 @@ const int SINGLE_MODE = 0;
 const int MULTI_MODE = 1;
 const int SERVER_MODE = 2;
 const int CLIENT_MODE = 3;
+const int WINNER = 1;
+const int LOSER = 2;
 
 extern SDL_Surface *background;
 extern SDL_Surface *screen;
@@ -44,7 +46,7 @@ void clean_up();
 
 void main_game(int selector, int mode);
 void init_ball();
-void game_over(int score);
+void game_over(int score, int state);
 void menu();
 int select_mode();
 int select_level();
