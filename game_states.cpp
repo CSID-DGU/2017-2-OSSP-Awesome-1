@@ -444,6 +444,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 				if (life == 2) {
 					SDL_FreeSurface(heart);
 					SDL_FreeSurface(message);
+					SDL_FreeSurface(message2);
 				}
 				else if (life == 1) {
 					SDL_FreeSurface(heart2);
@@ -524,8 +525,8 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		caption << /* "FPS: " << (int)(frames*1000.0/(SDL_GetTicks() - fps_calc_timer+1)) << */"Score: " << score
 			<< "       Level: " << level;//level 추가로 표시
 		message = TTF_RenderText_Solid(font, caption.str().c_str(), textColor);
-		caption2 << "Life: " << life;
-		message2 = TTF_RenderText_Solid(font, caption2.str().c_str(), textColor);
+		//caption2 << "Life: " << life;
+		//message2 = TTF_RenderText_Solid(font, caption2.str().c_str(), textColor);
 		if (SDL_GetTicks() - fps_calc_timer > 5000)
 		{
 			frames = 1;
