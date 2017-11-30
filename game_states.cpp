@@ -188,32 +188,36 @@ int socketing()
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(portNum);
 
-	inet_pton(AF_INET, ip, &server_addr.sin_addr);
-	bool succes = true;
+	bool isServer = true;
 	int count = 0;
 	if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
 	{
-		succes = false;
+		isServer = false;
 		std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
 	}
 
-	if (succes)
+	if (isServer)
 	{
 		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
-
-		listen(client, 1);
+		bool isConnect = false;
 
 		size = sizeof(server_addr);
 		std::cout << "=> Looking for clients..." << std::endl;
-		count = -1;
 		server = -1;
+		std::thread listenFor(waitClient, &isConnect);
+		std::thread waiting(waitingLoop, &isConnect);
+
+		listenFor.join();
+		waiting.join();
+
+		/*count = -1;
 		while (true)
 		{
 			server = accept(client, (struct sockaddr *)&server_addr, &size);
 			if(server >= 0) break;
 			count = (count + 1) % 4;
 			if (waiting(count) == INITIAL_MODE) return INITIAL_MODE;
-		}
+		}*/
 		/* ------------- ACCEPTING CLIENTS  ------------- */
 		/* ----------------- listen() ------------------- */
 
@@ -231,6 +235,7 @@ int socketing()
 	}
 	else
 	{
+		inet_pton(AF_INET, ip, &server_addr.sin_addr);
 		while (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
 		{}
 		std::cout << "연결 완료!" << std::endl;
@@ -242,6 +247,24 @@ int socketing()
 		main_game(0, CLIENT_MODE);
 	}
 	return INITIAL_MODE;
+}
+
+void waitClient(bool *isConnect)
+{
+	listen(client, 1);
+	*isConnect = true;
+}
+
+void waitingLoop(bool *isConnect)
+{
+	int count = -1;
+	while (!*isConnect)
+	{
+		server = accept(client, (struct sockaddr *)&server_addr, &size);
+		if (server >= 0) break;
+		count = (count + 1) % 4;
+		if (waiting(count) == INITIAL_MODE) return INITIAL_MODE;
+	}
 }
 
 bool init()

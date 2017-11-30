@@ -53,6 +53,8 @@ int select_mode();
 int select_level();
 int waiting(int count);
 int socketing();
+void waitClient(bool *isConnect);
+void waitingLoop(bool *isConnect);
 
 //socket variable
 static const int bufsize = 1024;
