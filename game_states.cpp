@@ -297,9 +297,9 @@ bool load_files()
 	player = load_image("assets/player_rocket.bmp");
 	player2 = load_image("assets/player2_rocket.bmp");
 	ball = load_image("assets/rocket.bmp");
-	heart = load_image("assets/life.bmp");
-	heart2 = load_image("assets/life.bmp");
-	heart3 = load_image("assets/life.bmp");
+	heart = load_image("assets/heart_background.png");
+	heart2 = load_image("assets/heart2_background.png");
+	heart3 = load_image("assets/heart3_background.png");
 
 	if (background == NULL)
 	{
@@ -429,11 +429,15 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			player_position_y++;
 		}//위 아래 이동 추가
 
-		apply_surface(0, 0, background, screen);
-		apply_surface(500, 10, heart, screen);
-		apply_surface(550, 10, heart2, screen);
-		apply_surface(600, 10, heart3, screen);
-
+		if (life == 3) 
+			apply_surface(0, 0, heart, screen);
+		// heart decrease as life goes down
+		else if (life == 2) {
+			apply_surface(0, 0, heart2, screen);
+		}
+		else if (life == 1) {
+			apply_surface(0, 0, heart3, screen);
+		}
 		for (i = 0; i < MAX_BALLS; i++)
 		{
 			// printf("ball %i: %i %i\n",i , balls[i].x, balls[i].y);
@@ -460,16 +464,6 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			if (intersects(balls[i], player_rect) && Die_Count == 0)
 			{
 				life--;
-				// heart decrease as life goes down
-				if (life == 2) {
-					SDL_FreeSurface(heart);
-					SDL_FreeSurface(message);
-					SDL_FreeSurface(message2);
-				}
-				else if (life == 1) {
-					SDL_FreeSurface(heart2);
-					SDL_FreeSurface(message);
-				}
 				if (life <= 0) //life소진시 종료
 				{
 					if (enemy_life != 0)
@@ -539,6 +533,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			apply_surface(player2_position - PLAYER_WIDTH / 2, player2_position_y - PLAYER_HEIGHT / 2/*SCREEN_HEIGHT - PLAYER_HEIGHT*/, player2, screen);//player2표시를 이동에 따라 표시
 		}
+
 
 
 		std::stringstream caption, caption2;
