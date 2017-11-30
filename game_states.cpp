@@ -205,10 +205,17 @@ int socketing()
 		std::cout << "=> Looking for clients..." << std::endl;
 		server = -1;
 		std::thread listenFor(waitClient, &isConnect);
-		std::thread waiting(waitingLoop, &isConnect);
 
-		listenFor.join();
-		waiting.join();
+		count = 0;
+		while (!isConnect)
+		{
+			if (waiting(count) == INITIAL_MODE)
+			{
+				listenFor.~thread();
+				return INITIAL_MODE;
+			}
+			count = (count + 1) % 4;
+		}
 
 		/*count = -1;
 		while (true)
@@ -226,6 +233,7 @@ int socketing()
 		if (server < 0)
 			std::cout << "=> Error on accepting..." << std::endl;
 		*/
+		server = accept(client, (struct sockaddr *)&server_addr, &size);
 		buffer_int[0] = (unsigned int)time(NULL);
 		send(server, buffer_int, bufsize, 0);
 		srand(buffer_int[0]);
@@ -253,18 +261,6 @@ void waitClient(bool *isConnect)
 {
 	listen(client, 1);
 	*isConnect = true;
-}
-
-void waitingLoop(bool *isConnect)
-{
-	int count = -1;
-	while (!*isConnect)
-	{
-		server = accept(client, (struct sockaddr *)&server_addr, &size);
-		if (server >= 0) break;
-		count = (count + 1) % 4;
-		if (waiting(count) == INITIAL_MODE) return INITIAL_MODE;
-	}
 }
 
 bool init()
