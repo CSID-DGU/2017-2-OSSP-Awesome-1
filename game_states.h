@@ -30,6 +30,8 @@ extern SDL_Surface* player;
 extern SDL_Surface* player2;
 extern SDL_Surface* ball;
 extern SDL_Surface* heart;
+extern SDL_Surface* heart2;
+extern SDL_Surface* heart3;
 
 extern SDL_Event event;
 extern TTF_Font *font;

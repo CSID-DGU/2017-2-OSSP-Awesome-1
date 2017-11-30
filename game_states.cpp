@@ -278,6 +278,8 @@ bool load_files()
 	player2 = load_image("assets/player2_rocket.bmp");
 	ball = load_image("assets/rocket.bmp");
 	heart = load_image("assets/life.bmp");
+	heart2 = load_image("assets/life.bmp");
+	heart3 = load_image("assets/life.bmp");
 
 	if (background == NULL)
 	{
@@ -406,9 +408,11 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			player_position_y++;
 		}//위 아래 이동 추가
-
-		//apply_surface(500, 10, heart, screen);	
+	
 		apply_surface(0, 0, background, screen);
+		apply_surface(500, 10, heart, screen);
+		apply_surface(550, 10, heart2, screen);
+		apply_surface(600, 10, heart3, screen);
 
 		for (i = 0; i < MAX_BALLS; i++)
 		{
@@ -420,7 +424,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 				score++;
 				if (score > LEVEL_UP_COUNT * (level - selector))
 				{
-					level++;//socre의 상태에 따라 레벨 증가
+					level++;//score의 상태에 따라 레벨 증가
 				}
 			}
 			SDL_Rect player_rect;
@@ -436,6 +440,15 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			if (intersects(balls[i], player_rect) && Die_Count == 0)
 			{
 				life--;
+				// heart decrease as life goes down
+				if (life == 2) {
+					SDL_FreeSurface(heart);
+					SDL_FreeSurface(message);
+				}
+				else if (life == 1) {
+					SDL_FreeSurface(heart2);
+					SDL_FreeSurface(message);
+				}
 				if (life <= 0) //life소진시 종료
 				{
 					if (enemy_life != 0)
@@ -519,7 +532,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			fps_calc_timer = SDL_GetTicks();
 		}
 		apply_surface(10, 10, message, screen);
-		apply_surface(SCREEN_WIDTH - 10 - message2->w, 10, message2, screen);
+		//apply_surface(SCREEN_WIDTH - 10 - message2->w, 10, message2, screen);
 
 		SDL_Flip(screen);
 		frames++;
