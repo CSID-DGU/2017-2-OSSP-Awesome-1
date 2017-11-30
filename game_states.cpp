@@ -233,7 +233,7 @@ int socketing()
 		if (server < 0)
 			std::cout << "=> Error on accepting..." << std::endl;
 		*/
-		server = accept(client, (struct sockaddr *)&server_addr, &size);
+
 		buffer_int[0] = (unsigned int)time(NULL);
 		send(server, buffer_int, bufsize, 0);
 		srand(buffer_int[0]);
@@ -260,6 +260,7 @@ int socketing()
 void waitClient(bool *isConnect)
 {
 	listen(client, 1);
+	server = accept(client, (struct sockaddr *)&server_addr, &size);
 	*isConnect = true;
 }
 
@@ -427,7 +428,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			player_position_y++;
 		}//위 아래 이동 추가
-	
+
 		apply_surface(0, 0, background, screen);
 		apply_surface(500, 10, heart, screen);
 		apply_surface(550, 10, heart2, screen);
