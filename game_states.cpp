@@ -191,8 +191,9 @@ int socketing()
 	bool isServer = true;
 	int count = 0;
 	inet_pton(AF_INET, ip, &server_addr.sin_addr);
-	while (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
+	while (true)
 	{
+		if(connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
 		isServer = false;
 		count++;
 		if (count == 100) break;
@@ -211,7 +212,11 @@ int socketing()
 		size = sizeof(server_addr);
 		std::cout << "=> Looking for clients..." << std::endl;
 		server = -1;
+
+		listen(client, 1);
+
 		std::thread listenFor(waitClient, &isConnect);
+		listenFor.join();
 
 		count = 0;
 		while (!isConnect)
@@ -268,7 +273,6 @@ int socketing()
 
 void waitClient(bool *isConnect)
 {
-	listen(client, 1);
 	server = accept(client, (struct sockaddr *)&server_addr, &size);
 	*isConnect = true;
 }
@@ -605,6 +609,8 @@ void main_game(int selector, int mode)//난이도 선택 변수
 
 		if(enemy_life == 0 && (mode == SERVER_MODE || mode == CLIENT_MODE))
 		{
+			close(client);
+			close(server);
 			game_over(level, score, WINNER);//1 == WIN_CASE
 			quit = true;
 		}
