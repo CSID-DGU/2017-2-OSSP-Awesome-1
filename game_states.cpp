@@ -190,14 +190,21 @@ int socketing()
 
 	bool isServer = true;
 	int count = 0;
-	if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
+	inet_pton(AF_INET, ip, &server_addr.sin_addr);
+	while (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
 	{
 		isServer = false;
-		std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
+		count++;
+		if (count == 100) break;
 	}
 
 	if (isServer)
 	{
+		inet_pton(AF_INET, "0.0.0.0", &server_addr.sin_addr); // 초기값인 0.0.0.0으로 초기화
+		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
+		{
+			std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
+		}
 		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
 		bool isConnect = false;
 
@@ -244,8 +251,10 @@ int socketing()
 	else
 	{
 		inet_pton(AF_INET, ip, &server_addr.sin_addr);
+		/*
 		while (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
 		{}
+		*/
 		std::cout << "연결 완료!" << std::endl;
 		std::cout << "=> 연결된 서버 포트 번호: " << portNum << std::endl;
 		recv(client, buffer_int, bufsize, 0);
@@ -429,7 +438,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			player_position_y++;
 		}//위 아래 이동 추가
 
-		if (life == 3) 
+		if (life == 3)
 			apply_surface(0, 0, heart, screen);
 		// heart decrease as life goes down
 		else if (life == 2) {
