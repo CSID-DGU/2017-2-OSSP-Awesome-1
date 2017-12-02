@@ -307,8 +307,8 @@ bool load_files()
 	font = TTF_OpenFont("assets/BMDOHYEON_ttf.ttf", 24);
 	font2 = TTF_OpenFont("assets/RaphLanokFuture.otf", 48);
 
-	player = load_image("assets/player_rocket.bmp");
-	player2 = load_image("assets/player2_rocket.bmp");
+	player = SDL_LoadBMP("assets/player1.bmp");
+	player2 = SDL_LoadBMP("assets/player2.bmp");
 	ball = load_image("assets/rocket.bmp");
 	heart = load_image("assets/heart_background.png");
 	heart2 = load_image("assets/heart2_background.png");
@@ -539,12 +539,14 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			if (Die_Count >= 600) Die_Count = 0;
 			apply_surface(player_position - PLAYER_WIDTH / 2, player_position_y - PLAYER_HEIGHT / 2/*SCREEN_HEIGHT - PLAYER_HEIGHT*/, player, screen);//player표시를 이동에 따라 표시
+			SDL_SetColorKey(player, SDL_SRCCOLORKEY, SDL_MapRGB(player->format, 255, 255, 255));
 		}
 		if (Die_Count > 0) Die_Count++;
 
 		if ((mode == CLIENT_MODE || mode == SERVER_MODE) && enemy_life > 0)//Socket 일때 만 표시
 		{
 			apply_surface(player2_position - PLAYER_WIDTH / 2, player2_position_y - PLAYER_HEIGHT / 2/*SCREEN_HEIGHT - PLAYER_HEIGHT*/, player2, screen);//player2표시를 이동에 따라 표시
+			SDL_SetColorKey(player2, SDL_SRCCOLORKEY, SDL_MapRGB(player2->format, 255, 255, 255));
 		}
 
 
@@ -553,15 +555,14 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		caption << /* "FPS: " << (int)(frames*1000.0/(SDL_GetTicks() - fps_calc_timer+1)) << */"Score: " << score
 			<< "       Level: " << level;//level 추가로 표시
 		message = TTF_RenderText_Solid(font, caption.str().c_str(), textColor);
-		//caption2 << "Life: " << life;
-		//message2 = TTF_RenderText_Solid(font, caption2.str().c_str(), textColor);
+		caption2 << "Life: " << life;
+		message2 = TTF_RenderText_Solid(font, caption2.str().c_str(), textColor);
 		if (SDL_GetTicks() - fps_calc_timer > 5000)
 		{
 			frames = 1;
 			fps_calc_timer = SDL_GetTicks();
 		}
 		apply_surface(10, 10, message, screen);
-		//apply_surface(SCREEN_WIDTH - 10 - message2->w, 10, message2, screen);
 
 		SDL_Flip(screen);
 		frames++;
@@ -574,34 +575,38 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			{
 				//server side
 			case SERVER_MODE:
-				std::cout << "Client: ";
+				//std::cout << "Client: ";
 				recv(server, buffer_int, bufsize, 0);
 				player2_position = buffer_int[0];
 				player2_position_y = buffer_int[1];
 				enemy_life = buffer_int[2];
-				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+				//std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				buffer_int[0] = player_position;
 				buffer_int[1] = player_position_y;
 				buffer_int[2] = life;
-				std::cout << "Server: ";
-				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+				caption2 << "Enemy Life: " << enemy_life;
+				apply_surface(SCREEN_WIDTH - 10 - message2->w, 10, message2, screen);
+				//std::cout << "Server: ";
+				//std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				send(server, buffer_int, bufsize, 0);
 				break;
 
 				//client side
 			case CLIENT_MODE:
-				std::cout << "Client: ";
+				//std::cout << "Client: ";
 				buffer_int[0] = player_position;
 				buffer_int[1] = player_position_y;
 				buffer_int[2] = life;
-				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+				//std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				send(client, buffer_int, bufsize, 0);
-				std::cout << "Server: ";
+				//std::cout << "Server: ";
 				recv(client, buffer_int, bufsize, 0);
 				player2_position = buffer_int[0];
 				player2_position_y = buffer_int[1];
 				enemy_life = buffer_int[2];
-				std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+				caption2 << "Enemy Life: " << enemy_life;
+				apply_surface(SCREEN_WIDTH - 10 - message2->w, 10, message2, screen);
+				//std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 				break;
 			case SINGLE_MODE:
 				break;
