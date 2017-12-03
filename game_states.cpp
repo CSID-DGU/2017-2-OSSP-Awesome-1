@@ -196,22 +196,29 @@ int socketing()
 		if(connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
 		isServer = false;
 		count++;
-		if (count == 1000) break;
+		if (count == 3) break;
 	}
 
 	if (isServer)
 	{
 		inet_pton(AF_INET, "0.0.0.0", &server_addr.sin_addr); // 초기값인 0.0.0.0으로 초기화
-		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
+
+		while ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
 		{
-			std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
-			while(true)
+			//std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
+			count = (count + 1) % 4;
+			//while(true)
 			if (SDL_PollEvent(&event))
 			{
-				std::string str = "Server Create Fail";
+				std::string str = "Server Creating Waiting, Cancle to space";
 				message = TTF_RenderText_Solid(font, str.c_str(), textColor);
 				apply_surface(0, 0, background, screen);
 				apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
+				//SDL_Delay(500);
+				std::string str2 = "Waiting";
+				for (int j = 0; j < count; j++) str2 += " .";
+				message2 = TTF_RenderText_Solid(font, str2.c_str(), textColor);
+				apply_surface((640 - message->w) / 2, 480 / 2 - message2->h + message->h + 10, message2, screen);
 				SDL_Flip(screen);
 				if (event.type == SDL_KEYDOWN)
 				{
