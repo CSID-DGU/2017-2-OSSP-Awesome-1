@@ -196,7 +196,7 @@ int socketing()
 		if(connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
 		isServer = false;
 		count++;
-		if (count == 100) break;
+		if (count == 10) break;
 	}
 
 	if (isServer)
@@ -216,18 +216,18 @@ int socketing()
 		listen(client, 1);
 
 		std::thread listenFor(waitClient, &isConnect);
-		listenFor.join();
+
 
 		count = 0;
 		while (!isConnect)
 		{
 			if (waiting(count) == INITIAL_MODE)
 			{
-				listenFor.~thread();
 				return INITIAL_MODE;
 			}
 			count = (count + 1) % 4;
 		}
+		listenFor.join();
 
 		/*count = -1;
 		while (true)
@@ -252,6 +252,7 @@ int socketing()
 		message = NULL;
 		init();
 		main_game(0, SERVER_MODE);
+		listenFor.~thread();
 	}
 	else
 	{
@@ -268,13 +269,15 @@ int socketing()
 		init();
 		main_game(0, CLIENT_MODE);
 	}
+
+
 	return INITIAL_MODE;
 }
 
 void waitClient(bool *isConnect)
 {
-	server = accept(client, (struct sockaddr *)&server_addr, &size);
-	*isConnect = true;
+	 server = accept(client, (struct sockaddr *)&server_addr, &size);
+	 *isConnect = true;
 }
 
 bool init()
@@ -497,6 +500,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 							std::cout << "Last Server: ";
 							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							send(server, buffer_int, bufsize, 0);
+							close(server);
 							break;
 							//client side
 						case CLIENT_MODE:
@@ -513,12 +517,13 @@ void main_game(int selector, int mode)//난이도 선택 변수
 							player2_position_y = buffer_int[1];
 							enemy_life = buffer_int[2];
 							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+							close(client);
 							break;
 						case SINGLE_MODE:
 							break;
 						}
-					close(client);
-					close(server);
+
+
 					if(mode == SINGLE_MODE)
 					{
 						game_over(level, score, SINGLE_MODE);
@@ -612,7 +617,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 				break;
 			}
 
-		if(enemy_life == 0 && (mode == SERVER_MODE || mode == CLIENT_MODE))
+		if(life != 0 && enemy_life == 0 && (mode == SERVER_MODE || mode == CLIENT_MODE))
 		{
 			close(client);
 			close(server);
