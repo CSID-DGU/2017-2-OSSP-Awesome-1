@@ -4,8 +4,8 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const int SCREEN_BPP = 32;
 
-const int PLAYER_WIDTH = 58;
-const int PLAYER_HEIGHT = 40;
+const int PLAYER_WIDTH = 30;
+const int PLAYER_HEIGHT = 21;
 
 const int BALL_SIZE = 10;
 const int MAX_BALLS = 25;
