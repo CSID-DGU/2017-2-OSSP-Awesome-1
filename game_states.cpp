@@ -196,7 +196,7 @@ int socketing()
 		if(connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
 		isServer = false;
 		count++;
-		if (count == 10) break;
+		if (count == 1000) break;
 	}
 
 	if (isServer)
@@ -205,6 +205,30 @@ int socketing()
 		if ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
 		{
 			std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
+			while(true)
+			if (SDL_PollEvent(&event))
+			{
+				std::string str = "Server Create Fail";
+				message = TTF_RenderText_Solid(font, str.c_str(), textColor);
+				apply_surface(0, 0, background, screen);
+				apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
+				SDL_Flip(screen);
+				if (event.type == SDL_KEYDOWN)
+				{
+					switch (event.key.keysym.sym)
+					{
+					case SDLK_SPACE://esc 키가 눌리면 종료
+						return INITIAL_MODE;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (event.type == SDL_QUIT)
+				{
+					return EXIT;
+				}
+			}
 		}
 		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
 		bool isConnect = false;
@@ -263,11 +287,28 @@ int socketing()
 		*/
 		std::cout << "연결 완료!" << std::endl;
 		std::cout << "=> 연결된 서버 포트 번호: " << portNum << std::endl;
-		recv(client, buffer_int, bufsize, 0);
-		srand(buffer_int[0]);
-		message = NULL;
-		init();
-		main_game(0, CLIENT_MODE);
+		int iResult;
+		struct timeval tv;
+		bool timeout = false;
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		FD_SET(client, &rfds);
+
+		tv.tv_sec = 5;
+		tv.tv_usec = 0;
+
+   iResult = select(client+1, &rfds, (fd_set *) 0, (fd_set *) 0, &tv);
+   if(iResult > 0)
+   {
+      recv(client, buffer_int, bufsize, 0);
+			timeout = true;
+   }
+	 if(!timeout) return INITIAL_MODE;
+
+	 srand(buffer_int[0]);
+	 message = NULL;
+	 init();
+	 main_game(0, CLIENT_MODE);
 	}
 
 
@@ -500,7 +541,6 @@ void main_game(int selector, int mode)//난이도 선택 변수
 							std::cout << "Last Server: ";
 							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							send(server, buffer_int, bufsize, 0);
-							close(server);
 							break;
 							//client side
 						case CLIENT_MODE:
@@ -517,12 +557,12 @@ void main_game(int selector, int mode)//난이도 선택 변수
 							player2_position_y = buffer_int[1];
 							enemy_life = buffer_int[2];
 							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
-							close(client);
 							break;
 						case SINGLE_MODE:
 							break;
 						}
-
+						close(server);
+						close(client);
 
 					if(mode == SINGLE_MODE)
 					{
