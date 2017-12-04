@@ -497,6 +497,22 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			if (event.type == SDL_QUIT)
 			{
+				switch (mode)
+				{
+					//server side
+				case SERVER_MODE:
+					recv(server, buffer_int, bufsize, 0);
+					send(server, 0, 0, 0);
+					break;
+					//client side
+				case CLIENT_MODE:
+					send(client, 0, 0, 0);
+					break;
+				default:
+					break;
+				}
+				close(server);
+				close(client);
 				quit = true;
 			}
 		}
@@ -600,7 +616,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 							enemy_life = buffer_int[2];
 							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
 							break;
-						case SINGLE_MODE:
+						default:
 							break;
 						}
 						close(server);
