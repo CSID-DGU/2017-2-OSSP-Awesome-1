@@ -563,65 +563,66 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			if (intersects(balls[i], player_rect) && Die_Count == 0)
 			{
 				life--;
-				if (life <= 0) //life소진시 종료
-				{
-					if (enemy_life != 0)
-						switch (mode)
-						{
-							//server side
-						case SERVER_MODE:
-							std::cout << "SERVER SIDE :";
-							std::cout << "Last Client: ";
-							recv(server, buffer_int, bufsize, 0);
-							player2_position = buffer_int[0];
-							player2_position_y = buffer_int[1];
-							enemy_life = buffer_int[2];
-							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
-							buffer_int[0] = player_position;
-							buffer_int[1] = player_position_y;
-							buffer_int[2] = life;
-							std::cout << "Last Server: ";
-							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
-							send(server, buffer_int, bufsize, 0);
-							break;
-							//client side
-						case CLIENT_MODE:
-							std::cout << "CLIENT SIDE :";
-							std::cout << "Last Client: ";
-							buffer_int[0] = player_position;
-							buffer_int[1] = player_position_y;
-							buffer_int[2] = life;
-							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
-							send(client, buffer_int, bufsize, 0);
-							std::cout << "Last Server: ";
-							recv(client, buffer_int, bufsize, 0);
-							player2_position = buffer_int[0];
-							player2_position_y = buffer_int[1];
-							enemy_life = buffer_int[2];
-							std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
-							break;
-						default:
-							break;
-						}
-						close(server);
-						close(client);
+			}
+			if (life <= 0) //life소진시 종료
+			{
+				if (enemy_life != 0)
+					switch (mode)
+					{
+						//server side
+					case SERVER_MODE:
+						std::cout << "SERVER SIDE :";
+						std::cout << "Last Client: ";
+						recv(server, buffer_int, bufsize, 0);
+						player2_position = buffer_int[0];
+						player2_position_y = buffer_int[1];
+						enemy_life = buffer_int[2];
+						std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+						buffer_int[0] = player_position;
+						buffer_int[1] = player_position_y;
+						buffer_int[2] = life;
+						std::cout << "Last Server: ";
+						std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+						send(server, buffer_int, bufsize, 0);
+						break;
+						//client side
+					case CLIENT_MODE:
+						std::cout << "CLIENT SIDE :";
+						std::cout << "Last Client: ";
+						buffer_int[0] = player_position;
+						buffer_int[1] = player_position_y;
+						buffer_int[2] = life;
+						std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+						send(client, buffer_int, bufsize, 0);
+						std::cout << "Last Server: ";
+						recv(client, buffer_int, bufsize, 0);
+						player2_position = buffer_int[0];
+						player2_position_y = buffer_int[1];
+						enemy_life = buffer_int[2];
+						std::cout << buffer_int[0] << " " << buffer_int[1] << " " << buffer_int[2] << std::endl;
+						break;
+					default:
+						break;
+					}
+				close(server);
+				close(client);
 
-					if(mode == SINGLE_MODE)
-					{
-						game_over(level, score, SINGLE_MODE);
-					}
-					else
-					{
-						game_over(level, score, LOSER);// 2 == LOSE_CASE
-					}
-					quit = true;
-				}
-				else //life가 남아있으면 공 초기화후 계속
+				if (mode == SINGLE_MODE)
 				{
-					Die_Count++;
+					game_over(level, score, SINGLE_MODE);
 				}
+				else
+				{
+					game_over(level, score, LOSER);// 2 == LOSE_CASE
+				}
+				quit = true;
+			}
+			else //life가 남아있으면 공 초기화후 계속
+			{
+				Die_Count++;
 			}
 		}
+		
 		if (Die_Count == 0 || Die_Count % 2 == 0)
 		{
 			if (Die_Count >= 600) Die_Count = 0;
