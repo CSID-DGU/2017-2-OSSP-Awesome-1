@@ -177,6 +177,8 @@ int waiting(int count)
 int socketing()
 {
 	client = socket(AF_INET, SOCK_STREAM, 0);
+	int yes = 1;
+	if(setsockopt(client, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) std::cout << "socket setting error" << std::endl;
 
 	if (client < 0)
 	{
@@ -695,6 +697,8 @@ void main_game(int selector, int mode)//난이도 선택 변수
 
 		if(life != 0 && enemy_life == 0 && (mode == SERVER_MODE || mode == CLIENT_MODE))
 		{
+			shutdown(client, SHUT_RDWR);
+			shutdown(server, SHUT_RDWR);
 			close(client);
 			close(server);
 			game_over(level, score, WINNER);//1 == WIN_CASE
