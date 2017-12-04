@@ -9,11 +9,7 @@ SDL_Surface* player = NULL;
 SDL_Surface* player2 = NULL;
 SDL_Surface* ball = NULL;
 SDL_Surface* heart = NULL;
-SDL_Surface* heart2 = NULL;
-SDL_Surface* heart3 = NULL;
 SDL_Surface* enemy_heart = NULL;
-SDL_Surface* enemy_heart2 = NULL;
-SDL_Surface* enemy_heart3 = NULL;
 
 SDL_Event event;
 TTF_Font *font = NULL;

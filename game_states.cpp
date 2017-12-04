@@ -393,12 +393,8 @@ bool load_files()
 	player = SDL_LoadBMP("assets/player1.bmp");
 	player2 = SDL_LoadBMP("assets/player2.bmp");
 	ball = load_image("assets/rocket.bmp");
-	heart = load_image("assets/heart_background.png");
-	heart2 = load_image("assets/heart2_background.png");
-	heart3 = load_image("assets/heart3_background.png");
+	heart = SDL_LoadBMP("assets/heart.bmp");
 	enemy_heart = SDL_LoadBMP("assets/enemy_heart.bmp");
-	enemy_heart2 = SDL_LoadBMP("assets/enemy_heart2.bmp");
-	enemy_heart3 = SDL_LoadBMP("assets/enemy_heart3.bmp");
 
 	if (background == NULL)
 	{
@@ -532,15 +528,18 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			player_position_y++;
 		}//위 아래 이동 추가
 
-		if (life == 3)
-			apply_surface(0, 0, heart, screen);
+		apply_surface(0, 0, background, screen);
+		if (life == 3) {
+			apply_surface(500, 20, heart, screen); apply_surface(540, 20, heart, screen); apply_surface(580, 20, heart, screen);
+		}
 		// heart decrease as life goes down
 		else if (life == 2) {
-			apply_surface(0, 0, heart2, screen);
+			apply_surface(540, 20, heart, screen); apply_surface(580, 20, heart, screen);
 		}
 		else if (life == 1) {
-			apply_surface(0, 0, heart3, screen);
+			apply_surface(580, 20, heart, screen);
 		}
+
 		for (i = 0; i < MAX_BALLS; i++)
 		{
 			// printf("ball %i: %i %i\n",i , balls[i].x, balls[i].y);
@@ -640,17 +639,15 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			SDL_SetColorKey(player2, SDL_SRCCOLORKEY, SDL_MapRGB(player2->format, 255, 255, 255));
 			// Present enemy_life on screen
 			if (enemy_life == 3) {
-			apply_surface(500, 50, enemy_heart3, screen);
-			SDL_SetColorKey(enemy_heart3, SDL_SRCCOLORKEY, SDL_MapRGB(enemy_heart3->format, 255, 255, 255));
+			apply_surface(500, 60, enemy_heart, screen); apply_surface(540, 60, enemy_heart, screen); apply_surface(580, 60, enemy_heart, screen);
 			}
 			else if (enemy_life == 2) {
-			apply_surface(540, 50, enemy_heart2, screen);
-			SDL_SetColorKey(enemy_heart2, SDL_SRCCOLORKEY, SDL_MapRGB(enemy_heart2->format, 255, 255, 255));
+			apply_surface(540, 60, enemy_heart, screen); apply_surface(580, 60, enemy_heart, screen);
 			}
 			else if (enemy_life == 1) {
-			apply_surface(580, 50, enemy_heart, screen);
-			SDL_SetColorKey(enemy_heart, SDL_SRCCOLORKEY, SDL_MapRGB(enemy_heart->format, 255, 255, 255));
+			apply_surface(580, 60, enemy_heart, screen);
 			}
+
 		}
 
 
