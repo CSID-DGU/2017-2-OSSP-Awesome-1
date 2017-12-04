@@ -143,37 +143,6 @@ int select_level()
 	}
 }
 
-int waiting(int count)
-{
-	SDL_Delay(500);
-	std::string str = "Waiting";
-	for (int j = 0; j < count; j++) str += " .";
-	message = TTF_RenderText_Solid(font, str.c_str(), textColor);
-	apply_surface(0, 0, background, screen);
-	apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
-	SDL_Flip(screen);
-	if (SDL_PollEvent(&event))
-	{
-		if (event.type == SDL_KEYDOWN)
-		{
-			switch (event.key.keysym.sym)
-			{
-			case SDLK_ESCAPE://esc 키가 눌리면 종료
-				return INITIAL_MODE;
-				break;
-			default:
-				break;
-			}
-		}
-		else if (event.type == SDL_QUIT)
-		{
-			return EXIT;
-		}
-	}
-
-	return MULTI_MODE;
-}
-
 int socketing()
 {
 	client = socket(AF_INET, SOCK_STREAM, 0);
@@ -253,43 +222,59 @@ int socketing()
 
 		listen(client, 1);
 
-		std::thread listenFor(waitClient, &isConnect);
-
-
-		count = 0;
+		bool* cntPointer = &isConnect;
+		std::thread listenFor(waitClient, &cntPointer);
+		std::thread waitingMassage(waiting, &cntPointer);
+		
 		while (!isConnect)
 		{
-			if (waiting(count) == INITIAL_MODE)
+			if (SDL_PollEvent(&event))
 			{
-				int tmp_client;
-				tmp_client = socket(AF_INET, SOCK_STREAM, 0);
-				//int count = 0;
-				inet_pton(AF_INET, ip, &server_addr.sin_addr);
-				if(connect(tmp_client, (struct sockaddr*)&server_addr, size) == -1) 
+				if (event.type == SDL_KEYDOWN)
 				{
-					//error message
-					std::cout << "Connecting Error!\nThere is not Server." << std::endl;
-					exit(1);
-				}
+					switch (event.key.keysym.sym)
+					{
+					case SDLK_ESCAPE://esc 키가 눌리면 종료
+						isConnect = true;
+						int tmp_client;
+						tmp_client = socket(AF_INET, SOCK_STREAM, 0);
+						inet_pton(AF_INET, ip, &server_addr.sin_addr);
+						if (connect(tmp_client, (struct sockaddr*)&server_addr, size) == -1)
+						{
+							//error message
+							std::cout << "Connecting Error!\nServer was not created." << std::endl;
+							exit(1);
+						}
 
-				/*while (true)
-				{
-					if (connect(tmp_client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
+						//3번 반복
+						//int count = 0;
+						/*while (true)
+						{
+						if (connect(tmp_client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
 						std::cout << "success" << std::endl;
-					else std::cout << "fail" << std::endl;
-					count++;
-					if (count == 3) break;
-				}*/
-				listenFor.detach();
-				listenFor.~thread();
-				close(tmp_client);
-				close(client);
-				close(server);
-				return INITIAL_MODE;
+						else std::cout << "fail" << std::endl;
+						count++;
+						if (count == 3) break;
+						}*/
+						close(tmp_client);
+						close(client);
+						close(server);
+						listenFor.join();
+						waitingMassage.join();
+						return INITIAL_MODE;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (event.type == SDL_QUIT)
+				{
+					return EXIT;
+				}
 			}
-			count = (count + 1) % 4;
 		}
 		listenFor.join();
+		waitingMassage.join();
 
 		/*count = -1;
 		while (true)
@@ -353,10 +338,27 @@ int socketing()
 	return INITIAL_MODE;
 }
 
-void waitClient(bool *isConnect)
+void waiting(void **isConnect)
+{
+	int count = 0;
+	while (!(**isConnect))
+	{
+		std::string str = "Waiting";
+		for (int j = 0; j < count; j++) str += " .";
+		message = TTF_RenderText_Solid(font, str.c_str(), textColor);
+		apply_surface(0, 0, background, screen);
+		apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
+		SDL_Flip(screen);
+		SDL_Delay(500);
+	}
+
+	return MULTI_MODE;
+}
+
+void waitClient(bool **isConnect)
 {
 	 server = accept(client, (struct sockaddr *)&server_addr, &size);
-	 *isConnect = true;
+	 **isConnect = true;
 }
 
 bool init()

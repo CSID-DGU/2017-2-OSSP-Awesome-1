@@ -54,9 +54,9 @@ void game_over(int level, int score, int state);
 void menu();
 int select_mode();
 int select_level();
-int waiting(int count);
+void waiting(void **isConnect);
 int socketing();
-void waitClient(bool *isConnect);
+void waitClient(bool **isConnect);
 
 //socket variable
 static const int bufsize = 1024;
