@@ -497,23 +497,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			if (event.type == SDL_QUIT)
 			{
-				switch (mode)
-				{
-					//server side
-				case SERVER_MODE:
-					recv(server, buffer_int, bufsize, 0);
-					send(server, 0, 0, 0);
-					break;
-					//client side
-				case CLIENT_MODE:
-					send(client, 0, 0, 0);
-					break;
-				default:
-					break;
-				}
-				close(server);
-				close(client);
-				quit = true;
+				life = 0;
 			}
 		}
 
@@ -521,7 +505,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 
 		if (keystates[SDLK_ESCAPE])
 		{
-			quit = true;
+			life = 0;
 		}
 
 		if (keystates[SDLK_LEFT] && player_position > PLAYER_WIDTH / 2)
