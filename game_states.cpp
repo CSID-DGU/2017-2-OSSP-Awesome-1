@@ -350,6 +350,7 @@ void waiting(bool **isConnect)
 		apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
 		SDL_Flip(screen);
 		SDL_Delay(500);
+		count = (count + 1) % 4;
 	}
 }
 
