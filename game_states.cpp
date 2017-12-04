@@ -564,6 +564,10 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			{
 				life--;
 			}
+			else //life가 남아있으면 공 초기화후 계속
+			{
+				Die_Count++;
+			}
 			if (life <= 0) //life소진시 종료
 			{
 				if (enemy_life != 0)
@@ -616,10 +620,6 @@ void main_game(int selector, int mode)//난이도 선택 변수
 					game_over(level, score, LOSER);// 2 == LOSE_CASE
 				}
 				quit = true;
-			}
-			else //life가 남아있으면 공 초기화후 계속
-			{
-				Die_Count++;
 			}
 		}
 		
