@@ -193,8 +193,8 @@ int socketing()
 	inet_pton(AF_INET, ip, &server_addr.sin_addr);
 	while (true)
 	{
-		if(connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
-		isServer = false;
+		if (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
+			isServer = false;
 		count++;
 		if (count == 3) break;
 	}
@@ -218,7 +218,7 @@ int socketing()
 				std::string str2 = "Waiting";
 				for (int j = 0; j < count; j++) str2 += " .";
 				message2 = TTF_RenderText_Solid(font, str2.c_str(), textColor);
-				apply_surface((640 - message->w) / 2, 480 / 2 - message2->h + message->h + 10, message2, screen);
+				apply_surface((640 - message2->w) / 2, 480 / 2 - message2->h + message->h + 10, message2, screen);
 				SDL_Flip(screen);
 				if (event.type == SDL_KEYDOWN)
 				{
@@ -254,6 +254,19 @@ int socketing()
 		{
 			if (waiting(count) == INITIAL_MODE)
 			{
+				int count = 0;
+				inet_pton(AF_INET, ip, &server_addr.sin_addr);
+				while (true)
+				{
+					if (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
+						isServer = false;
+					count++;
+					if (count == 3) break;
+				}
+				listenFor.detach();
+				listenFor.~thread();
+				close(client);
+				close(server);
 				return INITIAL_MODE;
 			}
 			count = (count + 1) % 4;
@@ -304,18 +317,18 @@ int socketing()
 		tv.tv_sec = 5;
 		tv.tv_usec = 0;
 
-   iResult = select(client+1, &rfds, (fd_set *) 0, (fd_set *) 0, &tv);
-   if(iResult > 0)
-   {
-      recv(client, buffer_int, bufsize, 0);
+		iResult = select(client + 1, &rfds, (fd_set *)0, (fd_set *)0, &tv);
+		if (iResult > 0)
+		{
+			recv(client, buffer_int, bufsize, 0);
 			timeout = true;
-   }
-	 if(!timeout) return INITIAL_MODE;
+		}
+		if (!timeout) return INITIAL_MODE;
 
-	 srand(buffer_int[0]);
-	 message = NULL;
-	 init();
-	 main_game(0, CLIENT_MODE);
+		srand(buffer_int[0]);
+		message = NULL;
+		init();
+		main_game(0, CLIENT_MODE);
 	}
 
 
