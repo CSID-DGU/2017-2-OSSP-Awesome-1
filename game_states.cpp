@@ -497,7 +497,9 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			if (event.type == SDL_QUIT)
 			{
-				life = 0;
+				balls[0].x = player_position;
+				balls[0].y = player_position_y;
+				life = 1;
 			}
 		}
 
@@ -505,7 +507,9 @@ void main_game(int selector, int mode)//난이도 선택 변수
 
 		if (keystates[SDLK_ESCAPE])
 		{
-			life = 0;
+			balls[0].x = player_position;
+			balls[0].y = player_position_y;
+			life = 1;
 		}
 
 		if (keystates[SDLK_LEFT] && player_position > PLAYER_WIDTH / 2)
