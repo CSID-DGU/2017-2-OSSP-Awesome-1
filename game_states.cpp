@@ -338,7 +338,7 @@ int socketing()
 	return INITIAL_MODE;
 }
 
-void waiting(void **isConnect)
+void waiting(bool **isConnect)
 {
 	int count = 0;
 	while (!(**isConnect))
@@ -351,8 +351,6 @@ void waiting(void **isConnect)
 		SDL_Flip(screen);
 		SDL_Delay(500);
 	}
-
-	return MULTI_MODE;
 }
 
 void waitClient(bool **isConnect)

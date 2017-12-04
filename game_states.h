@@ -54,7 +54,7 @@ void game_over(int level, int score, int state);
 void menu();
 int select_mode();
 int select_level();
-void waiting(void **isConnect);
+void waiting(bool **isConnect);
 int socketing();
 void waitClient(bool **isConnect);
 
