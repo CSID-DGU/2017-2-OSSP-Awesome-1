@@ -206,25 +206,30 @@ int socketing()
 		while ((bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
 		{
 			//std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
-			count = (count + 1) % 4;
-			//while(true)
-			std::string str = "Server Creating Waiting, Cancle to space";
-			message = TTF_RenderText_Solid(font, str.c_str(), textColor);
-			apply_surface(0, 0, background, screen);
-			apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
-			SDL_Delay(500);
-			std::string str2 = "Waiting";
-			for (int j = 0; j < count; j++) str2 += " .";
-			message2 = TTF_RenderText_Solid(font, str2.c_str(), textColor);
-			apply_surface((640 - message2->w) / 2, 480 / 2 - message2->h + message->h + 10, message2, screen);
+			//count = (count + 1) % 4;
+
+			//std::string str = "Server is Creating, Esc key to quit";
+			//message = TTF_RenderText_Solid(font, str.c_str(), textColor);
+			//apply_surface(0, 0, background, screen);
+			//apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
+			//SDL_Delay(500);
+			//std::string str2 = "Waiting";
+			//for (int j = 0; j < count; j++) str2 += " .";
+			//message2 = TTF_RenderText_Solid(font, str2.c_str(), textColor);
+			//apply_surface((640 - message2->w) / 2, 480 / 2 - message2->h + message->h + 10, message2, screen);
 			SDL_Flip(screen);
 			if (SDL_PollEvent(&event))
 			{
+				std::string str = "Server is Creating, Esc key to quit";
+				message = TTF_RenderText_Solid(font, str.c_str(), textColor);
+				apply_surface(0, 0, background, screen);
+				apply_surface((640 - message->w) / 2, 480 / 2 - message->h, message, screen);
+
 				if (event.type == SDL_KEYDOWN)
 				{
 					switch (event.key.keysym.sym)
 					{
-					case SDLK_SPACE://esc 키가 눌리면 종료
+					case SDLK_ESCAPE://esc 키가 눌리면 종료
 						return INITIAL_MODE;
 						break;
 					default:
@@ -261,6 +266,7 @@ int socketing()
 				if(connect(tmp_client, (struct sockaddr*)&server_addr, size) == -1) 
 				{
 					//error message
+					std::cout << "Connecting Error!\nThere is not Server." << std::endl;
 					exit(1);
 				}
 
