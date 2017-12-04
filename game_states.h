@@ -32,6 +32,9 @@ extern SDL_Surface* ball;
 extern SDL_Surface* heart;
 extern SDL_Surface* heart2;
 extern SDL_Surface* heart3;
+extern SDL_Surface* enemy_heart;
+extern SDL_Surface* enemy_heart2;
+extern SDL_Surface* enemy_heart3;
 
 extern SDL_Event event;
 extern TTF_Font *font;

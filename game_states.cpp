@@ -395,6 +395,9 @@ bool load_files()
 	heart = load_image("assets/heart_background.png");
 	heart2 = load_image("assets/heart2_background.png");
 	heart3 = load_image("assets/heart3_background.png");
+	enemy_heart = SDL_LoadBMP("assets/enemy_heart.bmp");
+	enemy_heart2 = SDL_LoadBMP("assets/enemy_heart2.bmp");
+	enemy_heart3 = SDL_LoadBMP("assets/enemy_heart3.bmp");
 
 	if (background == NULL)
 	{
@@ -630,6 +633,19 @@ void main_game(int selector, int mode)//난이도 선택 변수
 		{
 			apply_surface(player2_position - PLAYER_WIDTH / 2, player2_position_y - PLAYER_HEIGHT / 2/*SCREEN_HEIGHT - PLAYER_HEIGHT*/, player2, screen);//player2표시를 이동에 따라 표시
 			SDL_SetColorKey(player2, SDL_SRCCOLORKEY, SDL_MapRGB(player2->format, 255, 255, 255));
+			// Present enemy_life on screen
+			if (enemy_life == 3) {
+			apply_surface(500, 50, enemy_heart3, screen);
+			SDL_SetColorKey(enemy_heart3, SDL_SRCCOLORKEY, SDL_MapRGB(enemy_heart3->format, 255, 255, 255));
+			}
+			else if (enemy_life == 2) {
+			apply_surface(540, 50, enemy_heart2, screen);
+			SDL_SetColorKey(enemy_heart2, SDL_SRCCOLORKEY, SDL_MapRGB(enemy_heart2->format, 255, 255, 255));
+			}
+			else if (enemy_life == 1) {
+			apply_surface(580, 50, enemy_heart, screen);
+			SDL_SetColorKey(enemy_heart, SDL_SRCCOLORKEY, SDL_MapRGB(enemy_heart->format, 255, 255, 255));
+			}
 		}
 
 
