@@ -225,7 +225,7 @@ int socketing()
 		bool* cntPointer = &isConnect;
 		std::thread listenFor(waitClient, &cntPointer);
 		std::thread waitingMassage(waiting, &cntPointer);
-		
+
 		while (!isConnect)
 		{
 			if (SDL_PollEvent(&event))
@@ -496,6 +496,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 				balls[0].x = player_position;
 				balls[0].y = player_position_y;
 				life = 1;
+				Die_Count = 0;
 			}
 		}
 
@@ -506,6 +507,7 @@ void main_game(int selector, int mode)//난이도 선택 변수
 			balls[0].x = player_position;
 			balls[0].y = player_position_y;
 			life = 1;
+			Die_Count = 0;
 		}
 
 		if (keystates[SDLK_LEFT] && player_position > PLAYER_WIDTH / 2)
