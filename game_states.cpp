@@ -162,10 +162,17 @@ int socketing()
 	bool isServer = true;
 	int count = 0;
 	inet_pton(AF_INET, ip, &server_addr.sin_addr);
+
+	bool isConnect = false;
+	bool* cntPointer = &isConnect;
+	std::thread waitingMassage(waiting, &cntPointer);
 	while (true)
 	{
 		if (connect(client, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1)
+		{
 			isServer = false;
+			isConnect = true;
+		}
 		count++;
 		if (count == 3) break;
 	}
@@ -214,7 +221,6 @@ int socketing()
 			}
 		}
 		server_addr.sin_addr.s_addr = htons(INADDR_ANY);
-		bool isConnect = false;
 
 		size = sizeof(server_addr);
 		std::cout << "=> Looking for clients..." << std::endl;
@@ -222,9 +228,7 @@ int socketing()
 
 		listen(client, 1);
 
-		bool* cntPointer = &isConnect;
 		std::thread listenFor(waitClient, &cntPointer);
-		std::thread waitingMassage(waiting, &cntPointer);
 
 		while (!isConnect)
 		{
@@ -334,7 +338,6 @@ int socketing()
 		init();
 		main_game(0, CLIENT_MODE);
 	}
-
 
 	return INITIAL_MODE;
 }
