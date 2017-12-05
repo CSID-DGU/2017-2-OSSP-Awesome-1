@@ -56,7 +56,7 @@ void waitClient(bool **isConnect);
 
 //socket variable
 static const int bufsize = 1024;
-static const char ip[20] = "127.0.0.1";
+static const char ip[20] = "10.70.21.28";
 static int client, server;
 static int portNum = 1500;
 static int buffer_int[bufsize / 4];

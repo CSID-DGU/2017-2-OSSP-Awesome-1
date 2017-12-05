@@ -328,6 +328,7 @@ int socketing()
 		}
 		if (!timeout) return INITIAL_MODE;
 
+		std::cout << buffer_int[0] << std::endl;
 		srand(buffer_int[0]);
 		message = NULL;
 		init();
@@ -783,7 +784,9 @@ void game_over(int level, int score, int state)
 	{
 		if (SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE))
+			if (event.type == SDL_QUIT || 
+				(event.type == SDL_KEYDOWN && 
+				(event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_ESCAPE)))
 			{
 				break;
 			}
