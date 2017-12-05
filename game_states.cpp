@@ -172,6 +172,7 @@ int socketing()
 		{
 			isServer = false;
 			isConnect = true;
+			waitingMassage.join();
 		}
 		count++;
 		if (count == 3) break;
@@ -332,7 +333,6 @@ int socketing()
 		}
 		if (!timeout) return INITIAL_MODE;
 
-		std::cout << buffer_int[0] << std::endl;
 		srand(buffer_int[0]);
 		message = NULL;
 		init();
